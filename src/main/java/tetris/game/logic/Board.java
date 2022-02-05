@@ -3,6 +3,7 @@ package tetris.game.logic;
 import javafx.scene.paint.Color;
 import tetris.game.enums.GameMode;
 import tetris.game.enums.EventType;
+import tetris.game.enums.Rotation;
 import tetris.game.helpers.Copy;
 import tetris.game.logic.bricks.Brick;
 import tetris.game.logic.bricks.RandomBrickPicker;
@@ -30,8 +31,16 @@ public class Board {
         scores = new Scores();
     }
 
+    public void newGame() {
+        boardMatrix = new int[height][width];
+        scores.reset();
+        createNewBrick();
+    }
+
     public int[][] getBoardMatrix() {
-        return Copy.copy2DArray(boardMatrix);
+        int[][] matrix = Copy.copy2DArray(boardMatrix);
+        placeBrickHelper(matrix);
+        return matrix;
     }
 
     public Color getBrickColor(int brickID) {
@@ -52,7 +61,7 @@ public class Board {
         if (!bricksColors.containsKey(currentBrick.getID())) {
             bricksColors.put(currentBrick.getID(), currentBrick.getColor());
         }
-        return isIntersecting(currentPosition, currentBrick.getCurrentShape());
+        return isIntersecting(currentPosition);
     }
 
     public boolean moveBrick(EventType direction) {
@@ -64,61 +73,28 @@ public class Board {
             case RIGHT -> newPosition.translate(1, 0);
         }
 
-        if (isIntersecting(newPosition, currentBrick.getCurrentShape())) return false;
+        if (isIntersecting(newPosition)) return false;
         currentPosition = newPosition;
         return true;
     }
 
     public boolean rotateBrick() {
-        int[][] nextShape = currentBrick.getNextShape();
-        if (isIntersecting(currentPosition, nextShape)) return false;
-        currentBrick.rotate();
+        currentBrick.rotate(Rotation.RIGHT);
+        // Check if a brick can be rotated
+        if (isIntersecting(currentPosition)) {
+            // Rotate brick back if it is intersecting
+            currentBrick.rotate(Rotation.LEFT);
+            return false;
+        }
+
         return true;
     }
 
-    public void newGame() {
-        boardMatrix = new int[height][width];
-        scores.reset();
-        createNewBrick();
+    public void placeBrick() {
+        placeBrickHelper(boardMatrix);
     }
 
-    private boolean isOutOfBounds(Point point) {
-        return (point.x < 0 || point.x >= width || point.y < 0 || point.y >= height);
-    }
-
-    private boolean isIntersecting(Point position, int[][] shape) {
-        for (int shapeY = 0; shapeY < currentBrick.getCurrentHeight(); shapeY++) {
-            for (int shapeX = 0; shapeX < currentBrick.getCurrentWidth(); shapeX++) {
-                if (shape[shapeY][shapeX] == 0) continue;
-                int boardX = position.x + shapeX;
-                int boardY = position.y + shapeY;
-                if (isOutOfBounds(new Point(boardX, boardY)) || boardMatrix[boardY][boardX] != 0) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private void placeBrick() throws Exception {
-        int[][] shape = currentBrick.getCurrentShape();
-
-        if (isIntersecting(currentPosition, shape)) {
-            throw new Exception("Cannot place brick as it is intersecting with some other brick or is out of bounds");
-        }
-
-        for (int shapeY = 0; shapeY < currentBrick.getCurrentHeight(); shapeY++) {
-            for (int shapeX = 0; shapeX < currentBrick.getCurrentWidth(); shapeX++) {
-                if (shape[shapeY][shapeX] == 0) continue;
-                int boardX = currentPosition.x + shapeX;
-                int boardY = currentPosition.y + shapeY;
-                boardMatrix[boardY][boardX] = currentBrick.getID();
-            }
-        }
-    }
-
-    private void clearFullRows() {
+    public void clearFullRows() {
         int[][] newMatrix = new int[height][width];
         List<Integer> newRowsIndices = new ArrayList<>();
 
@@ -135,7 +111,7 @@ public class Board {
         }
 
         // Create new board matrix without cleared rows
-        for (int y = height - 1, i = 0; i <= newRowsIndices.size(); i++, y--) {
+        for (int y = height - 1, i = 0; i < newRowsIndices.size(); i++, y--) {
             newMatrix[y] = boardMatrix[newRowsIndices.get(i)];
         }
         boardMatrix = newMatrix;
@@ -143,5 +119,38 @@ public class Board {
         // Update score
         int clearedCount = boardMatrix.length - newRowsIndices.size();
         scores.add(50 * clearedCount * clearedCount);
+    }
+
+    private void placeBrickHelper(int[][] matrix) {
+        int[][] shape = currentBrick.getCurrentShape();
+
+        for (int shapeY = 0; shapeY < currentBrick.getCurrentHeight(); shapeY++) {
+            for (int shapeX = 0; shapeX < currentBrick.getCurrentWidth(); shapeX++) {
+                if (shape[shapeY][shapeX] == 0) continue;
+                int boardX = currentPosition.x + shapeX;
+                int boardY = currentPosition.y + shapeY;
+                matrix[boardY][boardX] = currentBrick.getID();
+            }
+        }
+    }
+
+    private boolean isOutOfBounds(Point point) {
+        return (point.x < 0 || point.x >= width || point.y < 0 || point.y >= height);
+    }
+
+    private boolean isIntersecting(Point position) {
+        int[][] shape = currentBrick.getCurrentShape();
+
+        for (int shapeY = 0; shapeY < currentBrick.getCurrentHeight(); shapeY++) {
+            for (int shapeX = 0; shapeX < currentBrick.getCurrentWidth(); shapeX++) {
+                if (shape[shapeY][shapeX] == 0) continue;
+                int boardX = position.x + shapeX;
+                int boardY = position.y + shapeY;
+                if (isOutOfBounds(new Point(boardX, boardY)) || boardMatrix[boardY][boardX] != 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

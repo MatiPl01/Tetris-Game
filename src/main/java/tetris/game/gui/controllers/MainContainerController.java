@@ -33,8 +33,8 @@ public class MainContainerController {
         return boardContainerController;
     }
 
-    public void setScene(Scene scene) {
+    public void init(Scene scene) {
         this.scene = scene;
-        boardContainerController.setScene(scene);
+        boardContainerController.init(scene);
     }
 }

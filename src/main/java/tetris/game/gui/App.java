@@ -27,7 +27,7 @@ public class App extends Application {
 
         // Pass the current scene to the MainContainerController
         MainContainerController mainContainerController = loader.getController();
-        mainContainerController.setScene(scene);
+        mainContainerController.init(scene);
         
         // Load stylesheet file
         String css = Objects.requireNonNull(getClass().getResource(STYLESHEET_PATH)).toExternalForm();

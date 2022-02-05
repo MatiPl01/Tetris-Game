@@ -1,6 +1,7 @@
 package tetris.game.logic.bricks;
 
 import javafx.scene.paint.Color;
+import tetris.game.enums.Rotation;
 import tetris.game.helpers.Copy;
 
 import java.util.ArrayList;
@@ -32,8 +33,11 @@ public abstract class AbstractBrick implements Brick {
     }
 
     @Override
-    public void rotate() {
-        currentShapeIdx = getNextShapeIndex();
+    public void rotate(Rotation rotation) {
+        switch (rotation) {
+            case RIGHT -> currentShapeIdx = getNextShapeIndex();
+            case LEFT -> currentShapeIdx = getPrevShapeIndex();
+        }
     }
 
     @Override
@@ -87,6 +91,8 @@ public abstract class AbstractBrick implements Brick {
     private int getNextShapeIndex() {
         return (currentShapeIdx + 1) % brickShapes.size();
     }
+
+    private int getPrevShapeIndex() { return (currentShapeIdx - 1) % brickShapes.size(); }
 
     private String createShapeString(int[][] shape) {
         StringJoiner sj = new StringJoiner("\n");

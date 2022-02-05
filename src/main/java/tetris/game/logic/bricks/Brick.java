@@ -1,6 +1,7 @@
 package tetris.game.logic.bricks;
 
 import javafx.scene.paint.Color;
+import tetris.game.enums.Rotation;
 
 import java.util.List;
 
@@ -21,5 +22,5 @@ public interface Brick {
 
     Color getColor();
 
-    void rotate();
+    void rotate(Rotation rotation);
 }
