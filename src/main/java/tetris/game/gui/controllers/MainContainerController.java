@@ -2,9 +2,12 @@ package tetris.game.gui.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import tetris.game.GameController;
+import tetris.game.enums.GameMode;
 
 public class MainContainerController {
     private Scene scene;
+    private GameController gameController;
 
     @FXML
     private BoardContainerController boardContainerController;
@@ -23,7 +26,11 @@ public class MainContainerController {
 
     @FXML
     private void initialize() {
-        System.out.println("MainContainerController Initialized"); // TODO - remove me
+        gameController = new GameController(10, 20, GameMode.NORMAL, this); // TODO - make these params adjustable before game initialization
+    }
+
+    public BoardContainerController getBoardContainerController() {
+        return boardContainerController;
     }
 
     public void setScene(Scene scene) {
