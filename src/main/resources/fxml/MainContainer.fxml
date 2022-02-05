@@ -2,13 +2,14 @@
 
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tetris.game.gui.controllers.MainContainerController">
    <children>
       <BorderPane layoutX="264.0" layoutY="149.0" prefHeight="151.0" prefWidth="110.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <right>
-            <VBox maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="250.0" BorderPane.alignment="CENTER">
+            <VBox maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" BorderPane.alignment="CENTER">
                <fx:include fx:id="timeContainer" source="TimeContainer.fxml" />
                <fx:include fx:id="nextBricksContainer" source="NextBricksContainer.fxml" />
                <fx:include fx:id="scoreContainer" source="ScoreContainer.fxml" />
@@ -16,7 +17,11 @@
          </right>
          <center>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" BorderPane.alignment="CENTER">
-               <fx:include fx:id="boardContainer" source="BoardContainer.fxml" />
+               <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <children>
+                     <fx:include fx:id="boardContainer" source="BoardContainer.fxml" />
+                  </children>
+               </StackPane>
             </AnchorPane>
          </center>
          <left>

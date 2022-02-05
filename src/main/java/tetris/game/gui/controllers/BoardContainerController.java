@@ -12,33 +12,24 @@ import tetris.game.enums.EventSource;
 import tetris.game.enums.EventType;
 import tetris.game.enums.GameState;
 import tetris.game.gui.events.MoveEvent;
+import tetris.game.gui.layout.Grid;
 import tetris.game.logic.Board;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BoardContainerController {
     private static final int REFRESH_INTERVAL = 400;
     private static final int CELL_SIZE = 30;
-    private static final int GRID_WIDTH = 10;  // TODO - allow user to set this on game startup
-    private static final int GRID_HEIGHT = 20; // TODO - allow user to set this on game startup
 
+    private Grid grid;
     private Scene scene;
     private Timeline timeline;
-
-    private final List<List<StackPane>> gridCells = new ArrayList<>();
-
-    @FXML
-    private GridPane grid;
     private GameController gameController;
 
     @FXML
-    private void initialize() {
-        buildGrid();
-    }
+    private GridPane gridPane;
 
-    public void init(Scene scene) {
+    public void init(Scene scene, int boardWidth, int boardHeight) {
         this.scene = scene;
+        grid = new Grid(gridPane, boardWidth, boardHeight, CELL_SIZE);
         setupKeyboardEvents();
         gameController.newGame();
     }
@@ -69,7 +60,7 @@ public class BoardContainerController {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                getCell(x, y).getChildren().clear();
+                grid.get(x, y).getChildren().clear();
                 if (matrix[y][x] == 0) continue;
 
                 Rectangle rectangle = new Rectangle(CELL_SIZE, CELL_SIZE);
@@ -83,32 +74,9 @@ public class BoardContainerController {
                     rectangle.setOpacity(.2);
                 }
 
-                getCell(x, y).getChildren().add(rectangle);
+                grid.get(x, y).getChildren().add(rectangle);
             }
         }
-    }
-
-    private void buildGrid() {
-        for (int i = 0; i < GRID_HEIGHT; i++) grid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
-        for (int i = 0; i < GRID_WIDTH; i++)  grid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
-        grid.setGridLinesVisible(true);
-
-        // Add grid cells (StackPanes) to make grid updates easier
-        for (int y = 0; y < GRID_HEIGHT; y++) {
-            // Add a new row
-            gridCells.add(new ArrayList<>());
-            for (int x = 0; x < GRID_WIDTH; x++) {
-                // Add a new column (StackPane to the row)
-                StackPane stackPane = new StackPane();
-                // Add a stackPane to the grid
-                grid.add(stackPane, x, y,1, 1);
-                gridCells.get(y).add(stackPane);
-            }
-        }
-    }
-
-    private StackPane getCell(int x, int y) {
-        return gridCells.get(y).get(x);
     }
 
     private void setupKeyboardEvents() {

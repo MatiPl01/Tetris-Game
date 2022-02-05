@@ -29,9 +29,9 @@ public class TBrick extends AbstractBrick {
 
     private void addLargeShapes() {
         generateShapes(new int[][] {
-                {1, 1, 1, 1, 1},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0}
+                {1, 1, 1},
+                {0, 1, 0},
+                {0, 1, 0}
         }, 4);
     }
 }

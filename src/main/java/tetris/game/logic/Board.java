@@ -22,13 +22,11 @@ public class Board {
 
     private final Map<Integer, Color> bricksColors = new HashMap<>();
     private int[][] boardMatrix;
-    private final int[] bricksHeights;
 
     public Board(int width, int height, GameMode gameMode) {
         this.width = width;
         this.height = height;
         boardMatrix = new int[height][width];
-        bricksHeights = new int[width];
         brickPicker = new RandomBrickPicker(gameMode == GameMode.HARD);
         scores = new Scores();
     }
@@ -92,9 +90,20 @@ public class Board {
     }
 
     public void placeBrick() {
+        placeBrick(false);
+    }
+
+    public void placeBrick(boolean updateScore) {
+        int prevY = currentPosition.y;
+        // Update current brick position
         currentPosition = getFallenBrickPosition();
         placeBrickHelper(boardMatrix, currentPosition);
-        updateBricksHeights();
+        // Update score
+        if (updateScore) {
+            int distance = currentPosition.y - prevY;
+            scores.add(distance);
+            System.out.println(scores.getScore());
+        }
     }
 
     public void clearFullRows() {
@@ -119,8 +128,8 @@ public class Board {
         }
         boardMatrix = newMatrix;
 
-        // Update score
         int clearedCount = boardMatrix.length - newRowsIndices.size();
+        // Update score
         scores.add(50 * clearedCount * clearedCount);
     }
 
@@ -143,7 +152,6 @@ public class Board {
             for (int shapeX = 0; shapeX < currentBrick.getCurrentWidth(); shapeX++) {
                 if (shape[shapeY][shapeX] == 0) continue;
                 int boardX = position.x + shapeX;
-//                System.out.println("x=" + boardX + ", y=" + boardY + ", id=" + id);
                 matrix[boardY][boardX] = id;
             }
         }
@@ -165,18 +173,17 @@ public class Board {
         return false;
     }
 
-    private void updateBricksHeights() {
-        int[] topIndexes = currentBrick.getShapeTopIndexes();
-        for (int shapeX = 0; shapeX < currentBrick.getCurrentWidth(); shapeX++) {
-            bricksHeights[currentPosition.x + shapeX] = height - currentPosition.y - topIndexes[shapeX];
-        }
-    }
-
     private Point getFallenBrickPosition() {
-        int y = height;
         int[] shapeBottomIndexes = currentBrick.getShapeBottomIndexes();
+        int y = height - currentBrick.getCurrentHeight();
         for (int shapeX = 0; shapeX < currentBrick.getCurrentWidth(); shapeX++) {
-            y = Math.min(y, height - bricksHeights[currentPosition.x + shapeX] - shapeBottomIndexes[shapeX] - 1);
+            int boardX = currentPosition.x + shapeX;
+            for (int boardY = currentPosition.y + shapeBottomIndexes[shapeX]; boardY < height; boardY++) {
+                if (boardY < 0 || boardMatrix[boardY][boardX] > 0) {
+                    y = Math.min(y, boardY - shapeBottomIndexes[shapeX] - 1);
+                    break;
+                }
+            }
         }
         return new Point(currentPosition.x, y);
     }

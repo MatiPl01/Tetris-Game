@@ -19,29 +19,33 @@ public class App extends Application {
     private static final String STYLESHEET_PATH = "/css/style.css";
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        // Load the initial window
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/fxml/MainContainer.fxml"));
-        AnchorPane mainContainer = loader.load();
-        Scene scene = new Scene(mainContainer);
+    public void start(Stage primaryStage) {
+        try {
+            // Load the initial window
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/MainContainer.fxml"));
+            AnchorPane mainContainer = loader.load();
+            Scene scene = new Scene(mainContainer);
 
-        // Pass the current scene to the MainContainerController
-        MainContainerController mainContainerController = loader.getController();
-        mainContainerController.init(scene);
+            // Pass the current scene to the MainContainerController
+            MainContainerController mainContainerController = loader.getController();
+            mainContainerController.init(scene, 10, 20);
 
-        // Load stylesheet file
-        String css = Objects.requireNonNull(getClass().getResource(STYLESHEET_PATH)).toExternalForm();
-        scene.getStylesheets().add(css);
+            // Load stylesheet file
+            String css = Objects.requireNonNull(getClass().getResource(STYLESHEET_PATH)).toExternalForm();
+            scene.getStylesheets().add(css);
 
-        // Add an icon
-        Image icon = new Image(new FileInputStream(ICON_PATH));
-        primaryStage.getIcons().add(icon);
+            // Add an icon
+            Image icon = new Image(new FileInputStream(ICON_PATH));
+            primaryStage.getIcons().add(icon);
 
-        // Set the icon and the window title
-        primaryStage.setScene(scene);
-        primaryStage.setTitle(WINDOW_TITLE);
-        primaryStage.show();
+            // Set the icon and the window title
+            primaryStage.setScene(scene);
+            primaryStage.setTitle(WINDOW_TITLE);
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

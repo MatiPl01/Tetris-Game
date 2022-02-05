@@ -22,16 +22,15 @@ public class LBrick extends AbstractBrick {
 
     private void addDefaultShapes() {
         generateShapes(new int[][] {
-                {1, 1, 1, 1},
-                {1, 0, 0, 0}
+                {1, 1, 1},
+                {1, 0, 0}
         }, 4);
     }
 
     private void addLargeShapes() {
         generateShapes(new int[][] {
-                {1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0}
+                {1, 1, 1, 1},
+                {1, 0, 0, 0}
         }, 4);
     }
 }

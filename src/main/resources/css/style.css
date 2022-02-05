@@ -1,7 +1,9 @@
+.next-brick,
 .board {
     -fx-background-color: #090909;
 }
 
+.next-brick,
 .board Line {
     -fx-stroke: #4E4E4E;
 }

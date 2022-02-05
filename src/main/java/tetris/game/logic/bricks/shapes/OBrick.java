@@ -13,25 +13,16 @@ public class OBrick extends AbstractBrick {
         addDefaultShapes();
     }
 
-    // Large size bricks (size of 5)
+    // Large size bricks (there are no squares having 5 cells)
     public OBrick(boolean isLarge) {
         super(ID, COLOR);
-        if (isLarge) addLargeShapes();
-        else addDefaultShapes();
+        addDefaultShapes();
     }
 
     private void addDefaultShapes() {
         generateShapes(new int[][] {
                 {1, 1},
                 {1, 1}
-        }, 1);
-    }
-
-    private void addLargeShapes() {
-        generateShapes(new int[][] {
-                {1, 1, 1},
-                {1, 1, 1},
-                {1, 1, 1}
         }, 1);
     }
 }

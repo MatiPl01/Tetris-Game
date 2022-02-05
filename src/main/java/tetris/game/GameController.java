@@ -6,13 +6,18 @@ import tetris.game.enums.GameMode;
 import tetris.game.enums.GameState;
 import tetris.game.gui.controllers.BoardContainerController;
 import tetris.game.gui.controllers.MainContainerController;
+import tetris.game.gui.controllers.NextBricksContainerController;
 import tetris.game.gui.events.MoveEvent;
 import tetris.game.logic.Board;
+import tetris.game.logic.bricks.Brick;
+
+import java.util.List;
 
 public class GameController {
     private final Board board;
     private final MainContainerController mainContainerController;
     private final BoardContainerController boardContainerController;
+    private final NextBricksContainerController nextBricksContainerController;
     private GameState gameState = GameState.RUNNING;
 
     public GameController(int boardWidth,
@@ -22,9 +27,15 @@ public class GameController {
         // Assign values to attributes
         this.mainContainerController = mainContainerController;
         this.boardContainerController = mainContainerController.getBoardContainerController();
+        this.nextBricksContainerController = mainContainerController.getNextBricksContainerController();
         board = new Board(boardWidth, boardHeight, gameMode);
 
         boardContainerController.setGameController(this);
+        nextBricksContainerController.init(gameMode == GameMode.NORMAL ? 4 : 5);
+    }
+
+    public GameState getGameState() {
+        return gameState;
     }
 
     public void newGame() {
@@ -32,15 +43,13 @@ public class GameController {
         board.newGame();
         boardContainerController.requestAnimationFrame(board);
         boardContainerController.startAnimation();
+        // Refresh next bricks container
+        refreshNextBricks();
     }
 
     public void gameOver() {
         this.gameState = GameState.FINISHED;
         System.out.println("Game Over"); // TODO - add game over
-    }
-
-    public GameState getGameState() {
-        return gameState;
     }
 
     public void handleMoveEvent(MoveEvent event) {
@@ -70,15 +79,9 @@ public class GameController {
             // Check if there are rows that can be cleared
             board.clearFullRows();
             // Spawn a new brick
-            boolean isIntersecting = board.createNewBrick();
-            // Check if a new brick is intersecting with another one
-            // (it will intersect if there is not enough space to spawn a new brick)
-            if (isIntersecting) {
-                // Place only a part of a brick that fits in
-                // (the last part before game over)
-                board.placeBrick();
-                gameOver();
-            }
+            spawnNewBrick();
+            // Refresh next bricks container
+            refreshNextBricks();
         }
         // Add 1 score if a brick was moved down by a player
         if (eventSource == EventSource.PLAYER) {
@@ -87,7 +90,28 @@ public class GameController {
     }
 
     private void handlePlaceEvent() {
-        board.placeBrick();
-        board.createNewBrick();
+        board.placeBrick(true);
+        // Spawn a new brick
+        spawnNewBrick();
+        // Refresh next bricks container
+        refreshNextBricks();
+    }
+
+    private void spawnNewBrick() {
+        boolean isIntersecting = board.createNewBrick();
+        // Check if a new brick is intersecting with another one
+        // (it will intersect if there is not enough space to spawn a new brick)
+        if (isIntersecting) {
+            // Place only a part of a brick that fits in
+            // (the last part before game over)
+            board.placeBrick();
+            gameOver();
+        }
+    }
+
+    private void refreshNextBricks() {
+        int nextBricksCount = nextBricksContainerController.getNextBricksCount();
+        List<Brick> nextBricks = board.peekNextBricks(nextBricksCount);
+        nextBricksContainerController.refresh(nextBricks);
     }
 }

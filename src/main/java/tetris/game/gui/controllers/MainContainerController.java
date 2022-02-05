@@ -26,15 +26,19 @@ public class MainContainerController {
 
     @FXML
     private void initialize() {
-        gameController = new GameController(10, 20, GameMode.NORMAL, this); // TODO - make these params adjustable before game initialization
+        gameController = new GameController(10, 20, GameMode.HARD, this); // TODO - make these params adjustable before game initialization
     }
 
     public BoardContainerController getBoardContainerController() {
         return boardContainerController;
     }
 
-    public void init(Scene scene) {
+    public NextBricksContainerController getNextBricksContainerController() {
+        return nextBricksContainerController;
+    }
+
+    public void init(Scene scene, int boardWidth, int boardHeight) {
         this.scene = scene;
-        boardContainerController.init(scene);
+        boardContainerController.init(scene, boardWidth, boardHeight);
     }
 }

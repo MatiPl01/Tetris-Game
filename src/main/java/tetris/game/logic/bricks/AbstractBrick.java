@@ -130,7 +130,7 @@ public abstract class AbstractBrick implements Brick {
         return (currentShapeIdx + 1) % brickShapes.size();
     }
 
-    private int getPrevShapeIndex() { return (currentShapeIdx - 1) % brickShapes.size(); }
+    private int getPrevShapeIndex() { return (brickShapes.size() + currentShapeIdx - 1) % brickShapes.size(); }
 
     private String createShapeString(int[][] shape) {
         StringJoiner sj = new StringJoiner("\n");
