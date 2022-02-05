@@ -8,6 +8,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import tetris.game.GameController;
 import tetris.game.gui.controllers.MainContainerController;
+import tetris.game.logic.bricks.shapes.TBrick;
 
 import java.io.FileInputStream;
 import java.util.Objects;
@@ -28,7 +29,7 @@ public class App extends Application {
         // Pass the current scene to the MainContainerController
         MainContainerController mainContainerController = loader.getController();
         mainContainerController.init(scene);
-        
+
         // Load stylesheet file
         String css = Objects.requireNonNull(getClass().getResource(STYLESHEET_PATH)).toExternalForm();
         scene.getStylesheets().add(css);

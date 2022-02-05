@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoardContainerController {
+    private static final int REFRESH_INTERVAL = 400;
     private static final int CELL_SIZE = 30;
     private static final int GRID_WIDTH = 10;  // TODO - allow user to set this on game startup
     private static final int GRID_HEIGHT = 20; // TODO - allow user to set this on game startup
@@ -40,10 +41,19 @@ public class BoardContainerController {
         this.scene = scene;
         setupKeyboardEvents();
         gameController.newGame();
+    }
+
+    public void startAnimation() {
         timeline = new Timeline(new KeyFrame(
-                Duration.millis(400),
-                actionEvent -> gameController.handleMoveEvent(new MoveEvent(EventSource.COMPUTER, EventType.DOWN))
-        ));
+                Duration.millis(REFRESH_INTERVAL),
+                actionEvent -> {
+                    if (gameController.getGameState() == GameState.RUNNING) {
+                        gameController.handleMoveEvent(new MoveEvent(EventSource.COMPUTER, EventType.DOWN));
+                    } else {
+                        timeline.stop();
+                    }
+                })
+        );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
@@ -60,12 +70,20 @@ public class BoardContainerController {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 getCell(x, y).getChildren().clear();
+                if (matrix[y][x] == 0) continue;
 
-                if (matrix[y][x] != 0) {
-                    Rectangle rectangle = new Rectangle(CELL_SIZE, CELL_SIZE);
+                Rectangle rectangle = new Rectangle(CELL_SIZE, CELL_SIZE);
+
+                // Display the current brick
+                if (matrix[y][x] > 0) {
                     rectangle.setFill(board.getBrickColor(matrix[y][x]));
-                    getCell(x, y).getChildren().add(rectangle);
+                // Display a shadow of the current brick
+                } else {
+                    rectangle.setFill(board.getBrickColor(-matrix[y][x]));
+                    rectangle.setOpacity(.2);
                 }
+
+                getCell(x, y).getChildren().add(rectangle);
             }
         }
     }
@@ -114,15 +132,11 @@ public class BoardContainerController {
                         event.consume();
                     }
                     case SPACE -> {
-                        placeBrick();
+                        gameController.handleMoveEvent(new MoveEvent(EventSource.PLAYER, EventType.PLACE));
                         event.consume();
                     }
                 }
             }
         });
-    }
-
-    private void placeBrick() {
-        System.out.println("placeBrick"); // TODO
     }
 }

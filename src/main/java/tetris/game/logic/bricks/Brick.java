@@ -12,6 +12,10 @@ public interface Brick {
 
     int[][] getNextShape();
 
+    int[] getShapeTopIndexes();
+
+    int[] getShapeBottomIndexes();
+
     void printAllShapes();
 
     int getCurrentWidth();

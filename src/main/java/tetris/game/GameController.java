@@ -28,7 +28,15 @@ public class GameController {
     }
 
     public void newGame() {
+        this.gameState = GameState.RUNNING;
         board.newGame();
+        boardContainerController.requestAnimationFrame(board);
+        boardContainerController.startAnimation();
+    }
+
+    public void gameOver() {
+        this.gameState = GameState.FINISHED;
+        System.out.println("Game Over"); // TODO - add game over
     }
 
     public GameState getGameState() {
@@ -39,20 +47,19 @@ public class GameController {
         switch (event.getEventType()) {
             case LEFT, RIGHT -> handleHorizontalMoveEvent(event.getEventType());
             case ROTATE -> handleRotateEvent();
+            case PLACE -> handlePlaceEvent();
             case DOWN -> handleDownEvent(event.getEventSource());
         }
+        // Refresh the animation
+        boardContainerController.requestAnimationFrame(board);
     }
 
     private void handleHorizontalMoveEvent(EventType eventType) {
         board.moveBrick(eventType);
-        // Refresh the animation
-        boardContainerController.requestAnimationFrame(board);
     }
 
     private void handleRotateEvent() {
         board.rotateBrick();
-        // Refresh the animation
-        boardContainerController.requestAnimationFrame(board);
     }
 
     private void handleDownEvent(EventSource eventSource) {
@@ -67,15 +74,20 @@ public class GameController {
             // Check if a new brick is intersecting with another one
             // (it will intersect if there is not enough space to spawn a new brick)
             if (isIntersecting) {
-                gameState = GameState.FINISHED;
-                // TODO - add game over
+                // Place only a part of a brick that fits in
+                // (the last part before game over)
+                board.placeBrick();
+                gameOver();
             }
         }
         // Add 1 score if a brick was moved down by a player
         if (eventSource == EventSource.PLAYER) {
             board.getScoresObj().add(1);
         }
-        // Refresh the animation
-        boardContainerController.requestAnimationFrame(board);
+    }
+
+    private void handlePlaceEvent() {
+        board.placeBrick();
+        board.createNewBrick();
     }
 }
