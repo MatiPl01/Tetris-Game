@@ -3,6 +3,7 @@ package tetris.game.gui.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import tetris.game.GameController;
 import tetris.game.enums.EventSource;
@@ -11,6 +12,11 @@ import tetris.game.enums.GameState;
 import tetris.game.gui.events.MoveEvent;
 import tetris.game.gui.layout.Grid;
 import tetris.game.logic.Board;
+import tetris.game.logic.bombs.Bomb;
+
+import java.awt.*;
+import java.util.Map;
+import java.util.Set;
 
 public class BoardContainerController {
     private static final int WINDOW_HEIGHT = 690;
@@ -21,6 +27,10 @@ public class BoardContainerController {
 
     @FXML
     private GridPane gridPane;
+
+    public Grid getGrid() {
+        return grid;
+    }
 
     public void init(Scene scene, int boardWidth, int boardHeight) {
         this.scene = scene;
@@ -38,26 +48,32 @@ public class BoardContainerController {
         int[][] matrix = board.getBoardMatrix();
         int height = matrix.length;
         int width = matrix[0].length;
+        Map<Point, Bomb> bombs = board.getBombs();
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 grid.get(x, y).getChildren().clear();
-                if (matrix[y][x] == 0) continue;
-
-                Rectangle rectangle = new Rectangle(grid.getCellWidth(), grid.getCellHeight());
 
                 // Display the current brick
                 if (matrix[y][x] > 0) {
-                    rectangle.setFill(board.getBrickColor(matrix[y][x]));
+                    showRectangle(x, y, board.getBrickColor(matrix[y][x]),1);
                 // Display a shadow of the current brick
-                } else {
-                    rectangle.setFill(board.getBrickColor(-matrix[y][x]));
-                    rectangle.setOpacity(.2);
+                } else if (matrix[y][x] < 0) {
+                    showRectangle(x, y, board.getBrickColor(-matrix[y][x]),.2);
                 }
 
-                grid.get(x, y).getChildren().add(rectangle);
+                // Display a bomb if a bomb is placed on the current field
+                Bomb bomb = bombs.get(new Point(x, y));
+                if (bomb != null) bomb.show();
             }
         }
+    }
+
+    private void showRectangle(int x, int y, Color color, double opacity) {
+        Rectangle rectangle = new Rectangle(grid.getCellWidth(), grid.getCellHeight());
+        rectangle.setFill(color);
+        grid.get(x, y).getChildren().add(rectangle);
+        rectangle.setOpacity(opacity);
     }
 
     private void setupKeyboardEvents() {

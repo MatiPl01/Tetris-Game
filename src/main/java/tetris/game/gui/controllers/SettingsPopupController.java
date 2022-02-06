@@ -7,7 +7,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import tetris.game.config.Config;
 import tetris.game.config.ConfigLoader;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.lang.Integer.min;
 import static java.lang.Integer.parseInt;
 
 public class SettingsPopupController {
@@ -63,7 +63,7 @@ public class SettingsPopupController {
         if (checkIfNotEmpty()) openMainScene();
         else {
             Dialog.informationDialog(
-                "Invalid settings",
+                "Tetris",
                 "Invalid settings in Folding map form" ,
                 "Found empty text fields");
         }
@@ -120,6 +120,18 @@ public class SettingsPopupController {
         setupIntValueValidator(heightInput, config.height);
         setupIntValueValidator(minRefreshIntervalInput, config.minRefreshInterval);
         setupIntValueValidator(maxRefreshIntervalInput, config.maxRefreshInterval);
+
+        minRefreshIntervalInput.textProperty().addListener((observable, oldValue, newValue) -> {
+           if (parseInt(newValue) > parseInt(maxRefreshIntervalInput.getText())) {
+               maxRefreshIntervalInput.setText(newValue);
+           }
+        });
+
+        maxRefreshIntervalInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (parseInt(newValue) < parseInt(minRefreshIntervalInput.getText())) {
+                minRefreshIntervalInput.setText(newValue);
+            }
+        });
     }
 
     private int validateInput(int value, IntValueConfig valueConfig) {

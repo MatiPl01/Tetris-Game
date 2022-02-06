@@ -1,6 +1,7 @@
 package tetris.game.logic.bricks;
 
 import tetris.game.logic.bricks.shapes.*;
+import tetris.game.others.Random;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -10,7 +11,6 @@ public class RandomBrickPicker {
 
     private final List<Brick> normalBricks = new ArrayList<>();
     private final List<Brick> largeBricks = new ArrayList<>();
-
     private final Deque<Brick> nextBricks = new ArrayDeque<>();
 
     private final boolean allowLarge;
@@ -37,7 +37,11 @@ public class RandomBrickPicker {
         Iterator<Brick> it = nextBricks.iterator();
 
         for (int i = 0; i < count; i++) {
-            peekedBricks.add(it.next());
+            try {
+                peekedBricks.add(it.next());
+            } catch (NoSuchElementException e) {
+                addNextRandomBrick();
+            }
         }
 
         return peekedBricks;
@@ -76,7 +80,7 @@ public class RandomBrickPicker {
     private void addNextRandomBrick() {
         Brick nextBrick;
 
-        if (allowLarge && Math.random() > .5) {
+        if (allowLarge && Random.random() > .5) {
             nextBrick = largeBricks.get(ThreadLocalRandom.current().nextInt(largeBricks.size()));
         } else {
             nextBrick = normalBricks.get(ThreadLocalRandom.current().nextInt(normalBricks.size()));

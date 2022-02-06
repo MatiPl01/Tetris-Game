@@ -1,6 +1,7 @@
 package tetris.game;
 
 import javafx.application.Platform;
+import javafx.scene.control.ButtonType;
 import tetris.game.enums.EventSource;
 import tetris.game.enums.EventType;
 import tetris.game.enums.GameMode;
@@ -8,10 +9,13 @@ import tetris.game.enums.GameState;
 import tetris.game.gui.controllers.*;
 import tetris.game.gui.events.MoveEvent;
 import tetris.game.logic.Board;
+import tetris.game.logic.bombs.BombSpawner;
 import tetris.game.logic.bricks.Brick;
+import tetris.game.others.Dialog;
 import tetris.game.others.Time;
 
 import java.util.List;
+import java.util.Optional;
 
 public class GameController implements Runnable {
     private static final int MAX_REFRESH_INTERVAL = 500;
@@ -22,24 +26,35 @@ public class GameController implements Runnable {
     private final Board board;
     private final BoardContainerController boardContainerController;
     private final NextBricksContainerController nextBricksContainerController;
+    private final MainContainerController mainContainerController;
     private final TimeContainerController timeContainerController;
     private final SettingsContainerController settingsContainerController;
     private final ScoreContainerController scoreContainerController;
 
-    private GameState gameState;
+    private BombSpawner bombSpawner;
+
+    private GameState gameState = GameState.FINISHED;
     private int refreshInterval = MAX_REFRESH_INTERVAL;
 
     public GameController(int boardWidth,
                           int boardHeight,
                           GameMode gameMode,
-                          MainContainerController mainContainerController) {
+                          MainContainerController mainContainerController,
+                          boolean spawnBombs) {
         // Assign values to attributes
         this.timeContainerController = mainContainerController.getTimeContainerController();
         this.scoreContainerController = mainContainerController.getScoreContainerController();
         this.boardContainerController = mainContainerController.getBoardContainerController();
         this.settingsContainerController = mainContainerController.getSettingsContainerController();
         this.nextBricksContainerController = mainContainerController.getNextBricksContainerController();
-        board = new Board(boardWidth, boardHeight, gameMode);
+        this.mainContainerController = mainContainerController;
+        board = new Board(boardWidth, boardHeight, gameMode, boardContainerController);
+
+        if (spawnBombs) {
+            bombSpawner = new BombSpawner(board, this);
+            Thread bombSpawnerThread = new Thread(bombSpawner);
+            bombSpawnerThread.start();
+        }
 
         board.getScoresObj().setController(mainContainerController.getScoreContainerController());
         boardContainerController.setGameController(this);
@@ -67,7 +82,6 @@ public class GameController implements Runnable {
         timeContainerController.resetTimer();
         refreshInterval = MAX_REFRESH_INTERVAL;
         updateSpeedLabel();
-        // Refresh next bricks container
         refreshNextBricks();
     }
 
@@ -76,7 +90,19 @@ public class GameController implements Runnable {
         board.saveScores();
         timeContainerController.pauseTimer();
         settingsContainerController.gameOver();
-        System.out.println("Game Over"); // TODO - add game over
+
+        Platform.runLater(() -> {
+            Optional<ButtonType> res = Dialog.confirmationDialog("Game Over", "The game is over. Would you like to try again?");
+            if (res.isPresent()) {
+                ButtonType buttonType = res.get();
+                if (ButtonType.OK.equals(buttonType)) newGame();
+                else exitGame();
+            }
+        });
+    }
+
+    public void exitGame() {
+        mainContainerController.exitGame();
     }
 
     public void pauseGame() {

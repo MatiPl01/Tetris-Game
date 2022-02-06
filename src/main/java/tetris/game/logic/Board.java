@@ -4,6 +4,8 @@ import javafx.scene.paint.Color;
 import tetris.game.enums.GameMode;
 import tetris.game.enums.EventType;
 import tetris.game.enums.Rotation;
+import tetris.game.gui.controllers.BoardContainerController;
+import tetris.game.logic.bombs.Bomb;
 import tetris.game.logic.scores.Scores;
 import tetris.game.others.Copy;
 import tetris.game.logic.bricks.Brick;
@@ -16,20 +18,30 @@ import java.util.List;
 public class Board {
     private final int width;
     private final int height;
+    private final BoardContainerController boardContainerController;
     private final RandomBrickPicker brickPicker;
     private final Scores scores;
     private Point currentPosition;
     private Brick currentBrick;
 
     private final Map<Integer, Color> bricksColors = new HashMap<>();
+    private final Map<Point, Bomb> bombs = new HashMap<>();
     private int[][] boardMatrix;
 
-    public Board(int width, int height, GameMode gameMode) {
+    public Board(int width,
+                 int height,
+                 GameMode gameMode,
+                 BoardContainerController boardContainerController) {
         this.width = width;
         this.height = height;
+        this.boardContainerController = boardContainerController;
         boardMatrix = new int[height][width];
         brickPicker = new RandomBrickPicker(gameMode == GameMode.HARD);
         scores = new Scores();
+    }
+
+    public BoardContainerController getBoardContainerController() {
+        return boardContainerController;
     }
 
     public void newGame() {
@@ -48,6 +60,18 @@ public class Board {
         if (shadowPosition.y >= 0) placeBrickHelper(matrix, shadowPosition, -currentBrick.getID());
         placeBrickHelper(matrix, currentPosition);
         return matrix;
+    }
+
+    public List<Point> getFallenBricksPositions() {
+        List<Point> positions = new ArrayList<>();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (boardMatrix[y][x] > 0) positions.add(new Point(x, y));
+            }
+        }
+
+        return positions;
     }
 
     public Color getBrickColor(int brickID) {
@@ -112,7 +136,6 @@ public class Board {
     }
 
     public void clearFullRows() {
-        int[][] newMatrix = new int[height][width];
         List<Integer> newRowsIndices = new ArrayList<>();
 
         // Select rows which will remain after removing full rows
@@ -127,15 +150,84 @@ public class Board {
             if (!isFullRow) newRowsIndices.add(y);
         }
 
-        // Create new board matrix without cleared rows
-        for (int y = height - 1, i = 0; i < newRowsIndices.size(); i++, y--) {
-            newMatrix[y] = boardMatrix[newRowsIndices.get(i)];
-        }
-        boardMatrix = newMatrix;
+        updateRows(newRowsIndices);
 
         int clearedCount = boardMatrix.length - newRowsIndices.size();
         // Update score
         scores.add(50 * clearedCount * clearedCount);
+    }
+
+    public Map<Point, Bomb> getBombs() {
+        return bombs;
+    }
+
+    public void spawnBomb(Point position, Bomb bomb) {
+        bombs.put(position, bomb);
+        // Remove the rectangle where the bomb will appear
+        boardMatrix[position.y][position.x] = 0;
+        boardContainerController.requestAnimationFrame(this);
+        scores.add(1);
+    }
+
+    public void explodeBomb(Point position) {
+        Bomb bomb = bombs.remove(position);
+        int explosionRadius = bomb.getExplosionRadius();
+
+        for (int x = 0; x < width; x++) {
+            // Remove the whole row of bricks
+            if (boardMatrix[position.y][x] > 0) {
+                boardMatrix[position.y][x] = 0;
+                scores.add(1);
+            }
+        }
+
+        // Remove surrounding bricks parts within a proper radius
+        int startX = Math.max(position.x - explosionRadius, 0);
+        int endX = Math.min(position.x + explosionRadius, width - 1);
+        int startY = Math.max(position.y - explosionRadius, 0);
+        int endY = Math.min(position.y + explosionRadius, height - 1);
+
+        System.out.println("startX: " + startX);
+        System.out.println("endX: " + endX);
+        System.out.println("startY: " + startY);
+        System.out.println("endY: " + endY);
+
+        for (int y = startY; y < endY; y++) {
+            for (int x = startX; x < endX; x++) {
+                if (boardMatrix[y][x] > 0) {
+                    System.out.println("REMOVING SURROUNDING: x=" + x + ", y=" + y);
+                    boardMatrix[y][x] = 0;
+                    scores.add(2);
+                }
+            }
+        }
+
+        // Remove empty rows
+        updateRows(getNotEmptyRowsIndexes());
+    }
+
+    private List<Integer> getNotEmptyRowsIndexes() {
+        List<Integer> notEmptyRowsIndexes = new ArrayList<>();
+
+        for (int y = height - 1; y >= 0; y--) {
+            for (int x = 0; x < width; x++) {
+                if (boardMatrix[y][x] > 0) {
+                    notEmptyRowsIndexes.add(y);
+                    break;
+                }
+            }
+        }
+        return notEmptyRowsIndexes;
+    }
+
+    private void updateRows(List<Integer> newRowsIndices) {
+        int[][] newMatrix = new int[height][width];
+
+        // Create new board matrix without empty rows
+        for (int y = height - 1, i = 0; i < newRowsIndices.size(); i++, y--) {
+            newMatrix[y] = boardMatrix[newRowsIndices.get(i)];
+        }
+        boardMatrix = newMatrix;
     }
 
     private boolean isOutOfBounds(Point point) {

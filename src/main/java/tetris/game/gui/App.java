@@ -23,12 +23,6 @@ public class App extends Application {
             loader.setLocation(getClass().getResource("/fxml/SettingsPopup.fxml"));
             AnchorPane settingsPopup = loader.load();
             Scene scene = new Scene(settingsPopup);
-//            AnchorPane mainContainer = loader.load();
-//            Scene scene = new Scene(mainContainer);
-
-//            // Pass the current scene to the MainContainerController
-//            MainContainerController mainContainerController = loader.getController();
-//            mainContainerController.init(scene, 15, 30, GameMode.NORMAL);
 
             // Load stylesheet file
             String css = Objects.requireNonNull(getClass().getResource(STYLESHEET_PATH)).toExternalForm();

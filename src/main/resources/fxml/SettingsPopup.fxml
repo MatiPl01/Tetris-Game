@@ -133,7 +133,7 @@
                   </VBox>
                   <HBox alignment="CENTER">
                      <children>
-                        <CheckBox fx:id="spawnBombsCheckbox" mnemonicParsing="false" text="Spawn bombs">
+                        <CheckBox fx:id="spawnBombsCheckbox" selected="true" mnemonicParsing="false" text="Spawn bombs">
                            <HBox.margin>
                               <Insets top="10.0" />
                            </HBox.margin>
