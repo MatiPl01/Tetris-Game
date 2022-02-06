@@ -131,7 +131,6 @@ public class Board {
         if (updateScore) {
             int distance = currentPosition.y - prevY;
             scores.add(distance);
-            System.out.println(scores.getScore());
         }
     }
 
@@ -187,15 +186,9 @@ public class Board {
         int startY = Math.max(position.y - explosionRadius, 0);
         int endY = Math.min(position.y + explosionRadius, height - 1);
 
-        System.out.println("startX: " + startX);
-        System.out.println("endX: " + endX);
-        System.out.println("startY: " + startY);
-        System.out.println("endY: " + endY);
-
         for (int y = startY; y < endY; y++) {
             for (int x = startX; x < endX; x++) {
                 if (boardMatrix[y][x] > 0) {
-                    System.out.println("REMOVING SURROUNDING: x=" + x + ", y=" + y);
                     boardMatrix[y][x] = 0;
                     scores.add(2);
                 }

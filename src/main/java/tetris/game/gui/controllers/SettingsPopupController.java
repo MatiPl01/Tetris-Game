@@ -96,7 +96,7 @@ public class SettingsPopupController {
         try {
             return ConfigLoader.load(CONFIG_JSON_PATH);
         } catch (IOException e) {
-            System.out.println("Failed to load config file. Exiting.");
+            Dialog.informationDialog("Tetris", "Error", "Failed to load config file");
             e.printStackTrace();
             System.exit(1);
             return null;

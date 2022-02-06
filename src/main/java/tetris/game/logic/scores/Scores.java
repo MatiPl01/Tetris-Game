@@ -2,6 +2,7 @@ package tetris.game.logic.scores;
 
 import javafx.application.Platform;
 import tetris.game.gui.controllers.ScoreContainerController;
+import tetris.game.others.Dialog;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -63,7 +64,7 @@ public class Scores {
 
                     bw.close();
                 } catch (IOException e) {
-                    System.out.println(WRITE_ERROR_MESSAGE);
+                    Dialog.informationDialog("Tetris", "Error", WRITE_ERROR_MESSAGE);
                     e.printStackTrace();
                 }
             }
@@ -95,10 +96,9 @@ public class Scores {
 
                 br.close();
                 show();
-            } catch (FileNotFoundException e) {
-                System.out.println("No previous scores are saved");
+            } catch (FileNotFoundException ignored) {
             } catch (IOException e) {
-                System.out.println(READ_ERROR_MESSAGE);
+                Dialog.informationDialog("Tetris", "Error", READ_ERROR_MESSAGE);
                 e.printStackTrace();
             }
         });
