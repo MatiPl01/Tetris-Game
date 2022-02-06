@@ -1,12 +1,9 @@
 package tetris.game.gui.controllers;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 import tetris.game.GameController;
 import tetris.game.enums.EventSource;
 import tetris.game.enums.EventType;
@@ -16,12 +13,10 @@ import tetris.game.gui.layout.Grid;
 import tetris.game.logic.Board;
 
 public class BoardContainerController {
-    private static final int REFRESH_INTERVAL = 400;
     private static final int WINDOW_HEIGHT = 690;
 
     private Grid grid;
     private Scene scene;
-    private Timeline timeline;
     private GameController gameController;
 
     @FXML
@@ -34,33 +29,12 @@ public class BoardContainerController {
         gameController.newGame();
     }
 
-    public void pauseAnimation() {
-        if (timeline != null) timeline.stop();
-    }
-
-    public void startAnimation() {
-        if (timeline == null) {
-            timeline = new Timeline(new KeyFrame(
-                    Duration.millis(REFRESH_INTERVAL),
-                    actionEvent -> {
-                        if (gameController.getGameState() == GameState.RUNNING) {
-                            gridPane.requestFocus();
-                            gameController.handleMoveEvent(new MoveEvent(EventSource.COMPUTER, EventType.DOWN));
-                        } else {
-                            timeline.stop();
-                        }
-                    })
-            );
-            timeline.setCycleCount(Timeline.INDEFINITE);
-        }
-        timeline.play();
-    }
-
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
     }
 
     public void requestAnimationFrame(Board board) {
+        gridPane.requestFocus();
         int[][] matrix = board.getBoardMatrix();
         int height = matrix.length;
         int width = matrix[0].length;

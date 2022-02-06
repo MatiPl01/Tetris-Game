@@ -1,5 +1,6 @@
 package tetris.game.gui.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
@@ -37,9 +38,11 @@ public class NextBricksContainerController {
     }
 
     public void refresh(List<Brick> bricks) {
-        for (int i = 0; i < NEXT_BRICKS_COUNT; i++) {
-            refreshGrid(grids.get(i), bricks.get(i));
-        }
+        Platform.runLater(() -> {
+            for (int i = 0; i < NEXT_BRICKS_COUNT; i++) {
+                refreshGrid(grids.get(i), bricks.get(i));
+            }
+        });
     }
 
     private void buildGrid(GridPane gridPane) {

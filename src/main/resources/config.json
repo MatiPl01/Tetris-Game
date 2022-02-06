@@ -1,0 +1,30 @@
+{
+  "dimensions": {
+    "width": {
+      "default": 10,
+      "min": 5,
+      "max": 40
+    },
+    "height": {
+      "default": 20,
+      "min": 10,
+      "max": 50
+    },
+    "mode": {
+      "default": "normal",
+      "allModes": ["normal", "hard"]
+    },
+    "refreshInterval": {
+      "minInterval": {
+        "min": 10,
+        "max": 1000,
+        "default": 50
+      },
+      "maxInterval": {
+        "min": 10,
+        "max": 5000,
+        "default": 500
+      }
+    }
+  }
+}

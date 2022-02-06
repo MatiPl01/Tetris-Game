@@ -6,8 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import tetris.game.enums.GameMode;
-import tetris.game.gui.controllers.MainContainerController;
 
 import java.io.FileInputStream;
 import java.util.Objects;
@@ -22,13 +20,15 @@ public class App extends Application {
         try {
             // Load the initial window
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/MainContainer.fxml"));
-            AnchorPane mainContainer = loader.load();
-            Scene scene = new Scene(mainContainer);
+            loader.setLocation(getClass().getResource("/fxml/SettingsPopup.fxml"));
+            AnchorPane settingsPopup = loader.load();
+            Scene scene = new Scene(settingsPopup);
+//            AnchorPane mainContainer = loader.load();
+//            Scene scene = new Scene(mainContainer);
 
-            // Pass the current scene to the MainContainerController
-            MainContainerController mainContainerController = loader.getController();
-            mainContainerController.init(scene, 15, 30, GameMode.NORMAL);
+//            // Pass the current scene to the MainContainerController
+//            MainContainerController mainContainerController = loader.getController();
+//            mainContainerController.init(scene, 15, 30, GameMode.NORMAL);
 
             // Load stylesheet file
             String css = Objects.requireNonNull(getClass().getResource(STYLESHEET_PATH)).toExternalForm();

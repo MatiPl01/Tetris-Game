@@ -38,11 +38,7 @@ public class Scores {
 
     public void add(int delta) {
         score += delta;
-        controller.updateDisplayedScore(score);
-        if (score > bestScore.score()) {
-            bestScore = new ScoreRecord(score, DATE_FORMAT.format(new Date()));
-            controller.displayBestScore(bestScore);
-        }
+        updateDisplayedScore();
     }
 
     public void reset() {
@@ -56,18 +52,13 @@ public class Scores {
             if (bestScore != null) {
                 try {
                     BufferedWriter bw = new BufferedWriter(new FileWriter(SCORES_FILE_PATH));
-
-                    System.out.println("PREV SCORES SIZE: " + prevScores.size());
                     // Write previous scores
                     for (int i = (prevScores.size() == MAX_SAVED_SCORES ? 1 : 0); i < prevScores.size(); i++) {
-                        System.out.println("WRITING PREV SCORE: " + prevScores.get(i).toCSV(DELIMITER));
                         bw.write(prevScores.get(i).toCSV(DELIMITER));
                     }
                     // Write the current score
                     bw.write(new ScoreRecord(score, DATE_FORMAT.format(new Date())).toCSV(DELIMITER));
-                    System.out.println("WRITING CURRENT SCORE: " + new ScoreRecord(score, DATE_FORMAT.format(new Date())).toCSV(DELIMITER));
                     // Write the max score
-                    System.out.println("WRITING BEST SCORE: " + bestScore.toCSV(DELIMITER));
                     bw.write(bestScore.toCSV(DELIMITER));
 
                     bw.close();
@@ -102,8 +93,6 @@ public class Scores {
                     bestScore = new ScoreRecord(0, DATE_FORMAT.format(new Date()));
                 }
 
-                System.out.println("Loaded prev scores: " + prevScores);
-
                 br.close();
                 show();
             } catch (FileNotFoundException e) {
@@ -119,11 +108,22 @@ public class Scores {
         Platform.runLater(() -> {
             score = 0;
             bestScore = null;
+            updateDisplayedScore();
         });
     }
 
     private ScoreRecord parseScoresLine(String line) {
         String[] values = line.split(",");
         return new ScoreRecord(Integer.parseInt(values[0]), values[1]);
+    }
+
+    private void updateDisplayedScore() {
+        Platform.runLater(() -> {
+            controller.updateDisplayedScore(score);
+            if (score > bestScore.score()) {
+                bestScore = new ScoreRecord(score, DATE_FORMAT.format(new Date()));
+                controller.displayBestScore(bestScore);
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package tetris.game;
 
+import javafx.application.Platform;
 import tetris.game.enums.EventSource;
 import tetris.game.enums.EventType;
 import tetris.game.enums.GameMode;
@@ -8,26 +9,33 @@ import tetris.game.gui.controllers.*;
 import tetris.game.gui.events.MoveEvent;
 import tetris.game.logic.Board;
 import tetris.game.logic.bricks.Brick;
+import tetris.game.others.Time;
 
 import java.util.List;
 
-public class GameController {
+public class GameController implements Runnable {
+    private static final int MAX_REFRESH_INTERVAL = 500;
+    private static final int MIN_REFRESH_INTERVAL = 50;
+    private static final int PAUSE_SLEEP_TIME = 100;
+    private static final int MAX_SPEED_SCORE = 5000;
+
     private final Board board;
-    private final MainContainerController mainContainerController;
     private final BoardContainerController boardContainerController;
     private final NextBricksContainerController nextBricksContainerController;
     private final TimeContainerController timeContainerController;
     private final SettingsContainerController settingsContainerController;
+    private final ScoreContainerController scoreContainerController;
 
     private GameState gameState;
+    private int refreshInterval = MAX_REFRESH_INTERVAL;
 
     public GameController(int boardWidth,
                           int boardHeight,
                           GameMode gameMode,
                           MainContainerController mainContainerController) {
         // Assign values to attributes
-        this.mainContainerController = mainContainerController;
         this.timeContainerController = mainContainerController.getTimeContainerController();
+        this.scoreContainerController = mainContainerController.getScoreContainerController();
         this.boardContainerController = mainContainerController.getBoardContainerController();
         this.settingsContainerController = mainContainerController.getSettingsContainerController();
         this.nextBricksContainerController = mainContainerController.getNextBricksContainerController();
@@ -38,6 +46,16 @@ public class GameController {
         nextBricksContainerController.init(gameMode == GameMode.NORMAL ? 4 : 5);
     }
 
+    @Override
+    public void run() {
+        while (true) {
+            switch (gameState) {
+                case RUNNING -> handleMoveEvent(new MoveEvent(EventSource.COMPUTER, EventType.DOWN), refreshInterval);
+                case PAUSED, FINISHED -> Time.sleep(PAUSE_SLEEP_TIME);
+            }
+        }
+    }
+
     public GameState getGameState() {
         return gameState;
     }
@@ -46,10 +64,9 @@ public class GameController {
         gameState = GameState.RUNNING;
         board.saveScores();
         board.newGame();
-        boardContainerController.requestAnimationFrame(board);
-        settingsContainerController.newGame();
-        boardContainerController.startAnimation();
         timeContainerController.resetTimer();
+        refreshInterval = MAX_REFRESH_INTERVAL;
+        updateSpeedLabel();
         // Refresh next bricks container
         refreshNextBricks();
     }
@@ -58,24 +75,25 @@ public class GameController {
         gameState = GameState.FINISHED;
         board.saveScores();
         timeContainerController.pauseTimer();
-        boardContainerController.pauseAnimation();
         settingsContainerController.gameOver();
         System.out.println("Game Over"); // TODO - add game over
     }
 
-    public void pauseGame() { // TODO - implement pause/resume
+    public void pauseGame() {
         gameState = GameState.PAUSED;
         timeContainerController.pauseTimer();
-        boardContainerController.pauseAnimation();
     }
 
-    public void resumeGame() { // TODO - implement pause/resume
+    public void resumeGame() {
         gameState = GameState.RUNNING;
         timeContainerController.resumeTimer();
-        boardContainerController.startAnimation();
     }
 
     public void handleMoveEvent(MoveEvent event) {
+        handleMoveEvent(event, 0);
+    }
+
+    public void handleMoveEvent(MoveEvent event, int sleepTime) {
         switch (event.getEventType()) {
             case LEFT, RIGHT -> handleHorizontalMoveEvent(event.getEventType());
             case ROTATE -> handleRotateEvent();
@@ -83,7 +101,7 @@ public class GameController {
             case DOWN -> handleDownEvent(event.getEventSource());
         }
         // Refresh the animation
-        boardContainerController.requestAnimationFrame(board);
+        renderNewFrame(sleepTime);
     }
 
     private void handleHorizontalMoveEvent(EventType eventType) {
@@ -116,6 +134,8 @@ public class GameController {
         spawnNewBrick();
         // Refresh next bricks container
         refreshNextBricks();
+        // Update refresh interval
+        updateRefreshInterval();
     }
 
     private void spawnNewBrick() {
@@ -134,5 +154,23 @@ public class GameController {
         int nextBricksCount = nextBricksContainerController.getNextBricksCount();
         List<Brick> nextBricks = board.peekNextBricks(nextBricksCount);
         nextBricksContainerController.refresh(nextBricks);
+    }
+
+    private void renderNewFrame(int sleepTime) {
+        long startTime = System.currentTimeMillis();
+        Platform.runLater(() -> boardContainerController.requestAnimationFrame(board));
+        long endTime = System.currentTimeMillis();
+        Time.sleep(Math.max(0, sleepTime - (int)(endTime - startTime)));
+    }
+
+    private void updateRefreshInterval() {
+        int score = board.getScoresObj().getScore();
+        double ratio = Math.min(1, 1. * score / MAX_SPEED_SCORE);
+        refreshInterval = (int)(MAX_REFRESH_INTERVAL - ratio * (MAX_REFRESH_INTERVAL - MIN_REFRESH_INTERVAL));
+        updateSpeedLabel();
+    }
+
+    private void updateSpeedLabel() {
+        Platform.runLater(() -> scoreContainerController.setSpeedMultiplier(1. * MAX_REFRESH_INTERVAL / refreshInterval));
     }
 }

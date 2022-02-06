@@ -27,6 +27,9 @@ public class ScoreContainerController {
     @FXML
     private Label prevScoresCountLabel;
 
+    @FXML
+    private Label speedMultiplierLabel;
+
     public void updateDisplayedScore(int score) {
         currScoreLabel.setText(String.valueOf(score));
     }
@@ -50,9 +53,11 @@ public class ScoreContainerController {
             hbox.getChildren().addAll(scoreLabel, region, dateLabel);
             prevScoresListVBox.getChildren().add(hbox);
 
-            if (i > 0) {
-                prevScoresListVBox.getChildren().add(new Separator());
-            }
+            if (i > 0) prevScoresListVBox.getChildren().add(new Separator());
         }
+    }
+
+    public void setSpeedMultiplier(double multiplier) {
+        speedMultiplierLabel.setText(String.format("%.2f", multiplier));
     }
 }

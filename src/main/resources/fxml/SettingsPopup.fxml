@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<AnchorPane fx:id="settingsPopupContainer" prefHeight="600.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tetris.game.gui.controllers.SettingsPopupController">
+   <children>
+      <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <Label style="-fx-font-size: 32;" text="Tetris" />
+            <VBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Separator prefWidth="200.0" />
+                        <Label text="Board dimensions">
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Separator prefWidth="200.0" />
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <HBox alignment="CENTER_RIGHT" prefWidth="250.0">
+                           <children>
+                              <Label text="Board width (number of cells)" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefWidth="250.0">
+                           <children>
+                              <TextField fx:id="widthInput" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <HBox alignment="CENTER_RIGHT" prefWidth="250.0">
+                           <children>
+                              <Label text="Board height (number of cells)" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefWidth="250.0">
+                           <children>
+                              <TextField fx:id="heightInput" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Separator prefWidth="200.0" />
+                        <Label text="Refresh intervals">
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Separator prefWidth="200.0" />
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <HBox alignment="CENTER_RIGHT" prefWidth="250.0">
+                           <children>
+                              <Label text="Minimum refresh interval (ms)" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefWidth="250.0">
+                           <children>
+                              <TextField fx:id="minRefreshIntervalInput" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <HBox alignment="CENTER_RIGHT" prefWidth="250.0">
+                           <children>
+                              <Label text="Maximum refresh interval (ms)" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefWidth="250.0">
+                           <children>
+                              <TextField fx:id="maxRefreshIntervalInput" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Separator prefWidth="200.0" />
+                        <Label text="Game settings">
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Separator prefWidth="200.0" />
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <HBox alignment="CENTER_RIGHT" prefWidth="250.0">
+                           <children>
+                              <Label text="Difficulty level" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefWidth="250.0">
+                           <children>
+                              <ComboBox fx:id="difficultyInput" onAction="#onDifficultyChange" prefWidth="150.0" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <VBox>
+                     <children>
+                        <Label text="Normal - traditional Tetris game with bricks consisting of 4 cells" />
+                        <Label text="Hard - game with bricks consisting of 4 or 5 cells (both are spawned interchangeably)" />
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <CheckBox fx:id="spawnBombsCheckbox" mnemonicParsing="false" onAction="#onSpawnBombsCheck" text="Spawn bombs">
+                           <HBox.margin>
+                              <Insets top="10.0" />
+                           </HBox.margin>
+                        </CheckBox>
+                     </children>
+                  </HBox>
+                  <VBox>
+                     <children>
+                        <Label maxHeight="40.0" minHeight="40.0" prefHeight="40.0" text="When the checkbox above is selected, the bombs will randomly spawn on brick pieces from time to time. The bomb destroys the entire row and several surrounding blocks." textOverrun="WORD_ELLIPSIS" wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </VBox>
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <Button fx:id="startGameButton" mnemonicParsing="false" onAction="#onStart" prefWidth="120.0" text="Start game" />
+                  <Button fx:id="clearFormButton" mnemonicParsing="false" onAction="#onClear" prefWidth="120.0" text="Clear" />
+                  <Button fx:id="resetFormButton" mnemonicParsing="false" onAction="#onReset" prefWidth="120.0" text="Reset to defaults" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

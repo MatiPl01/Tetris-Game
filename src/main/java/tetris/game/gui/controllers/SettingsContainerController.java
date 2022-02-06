@@ -31,8 +31,7 @@ public class SettingsContainerController {
 
     @FXML
     private void onNewGameClick() {
-        musicPlayer.clear();
-        setupMusicPlayer();
+        newGame();
         gameController.newGame();
     }
 
@@ -71,6 +70,12 @@ public class SettingsContainerController {
     }
 
     public void newGame() {
+        setupMusicPlayer();
+        gameController.resumeGame();
+        pauseGameButton.setText(PAUSE_GAME_TEXT);
+        musicPlayer.play();
+        musicState = MusicState.PLAYING;
+        pauseMusicButton.setText(PAUSE_MUSIC_TEXT);
         pauseGameButton.setDisable(false);
         pauseMusicButton.setDisable(false);
     }
@@ -82,6 +87,7 @@ public class SettingsContainerController {
     }
 
     private void setupMusicPlayer() {
+        musicPlayer.clear();
         musicPlayer.addTrack(MUSIC_BEGINNING_PATH);
         musicPlayer.addTrack(MUSIC_LOOPED_PATH,true);
         musicPlayer.play();

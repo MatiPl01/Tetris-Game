@@ -6,6 +6,8 @@ import tetris.game.GameController;
 import tetris.game.enums.GameMode;
 
 public class MainContainerController {
+    private Thread gameControllerThread;
+
     @FXML
     private BoardContainerController boardContainerController;
 
@@ -43,7 +45,9 @@ public class MainContainerController {
 
     public void init(Scene scene, int boardWidth, int boardHeight, GameMode gameMode) {
         GameController gameController = new GameController(boardWidth, boardHeight, gameMode, this);
+        gameControllerThread = new Thread(gameController);
         settingsContainerController.setGameController(gameController);
         boardContainerController.init(scene, boardWidth, boardHeight);
+        gameControllerThread.start();
     }
 }
