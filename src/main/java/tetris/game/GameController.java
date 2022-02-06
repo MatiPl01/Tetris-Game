@@ -4,9 +4,7 @@ import tetris.game.enums.EventSource;
 import tetris.game.enums.EventType;
 import tetris.game.enums.GameMode;
 import tetris.game.enums.GameState;
-import tetris.game.gui.controllers.BoardContainerController;
-import tetris.game.gui.controllers.MainContainerController;
-import tetris.game.gui.controllers.NextBricksContainerController;
+import tetris.game.gui.controllers.*;
 import tetris.game.gui.events.MoveEvent;
 import tetris.game.logic.Board;
 import tetris.game.logic.bricks.Brick;
@@ -18,7 +16,10 @@ public class GameController {
     private final MainContainerController mainContainerController;
     private final BoardContainerController boardContainerController;
     private final NextBricksContainerController nextBricksContainerController;
-    private GameState gameState = GameState.RUNNING;
+    private final TimeContainerController timeContainerController;
+    private final SettingsContainerController settingsContainerController;
+
+    private GameState gameState;
 
     public GameController(int boardWidth,
                           int boardHeight,
@@ -26,10 +27,13 @@ public class GameController {
                           MainContainerController mainContainerController) {
         // Assign values to attributes
         this.mainContainerController = mainContainerController;
+        this.timeContainerController = mainContainerController.getTimeContainerController();
         this.boardContainerController = mainContainerController.getBoardContainerController();
+        this.settingsContainerController = mainContainerController.getSettingsContainerController();
         this.nextBricksContainerController = mainContainerController.getNextBricksContainerController();
         board = new Board(boardWidth, boardHeight, gameMode);
 
+        board.getScoresObj().setController(mainContainerController.getScoreContainerController());
         boardContainerController.setGameController(this);
         nextBricksContainerController.init(gameMode == GameMode.NORMAL ? 4 : 5);
     }
@@ -42,14 +46,31 @@ public class GameController {
         this.gameState = GameState.RUNNING;
         board.newGame();
         boardContainerController.requestAnimationFrame(board);
+        settingsContainerController.newGame();
         boardContainerController.startAnimation();
+        timeContainerController.resetTimer();
         // Refresh next bricks container
         refreshNextBricks();
     }
 
     public void gameOver() {
         this.gameState = GameState.FINISHED;
+        timeContainerController.pauseTimer();
+        boardContainerController.pauseAnimation();
+        settingsContainerController.gameOver();
         System.out.println("Game Over"); // TODO - add game over
+    }
+
+    public void pauseGame() { // TODO - implement pause/resume
+        gameState = GameState.PAUSED;
+        timeContainerController.pauseTimer();
+        boardContainerController.pauseAnimation();
+    }
+
+    public void resumeGame() { // TODO - implement pause/resume
+        gameState = GameState.RUNNING;
+        timeContainerController.resumeTimer();
+        boardContainerController.startAnimation();
     }
 
     public void handleMoveEvent(MoveEvent event) {

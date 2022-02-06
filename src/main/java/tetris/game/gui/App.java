@@ -6,9 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import tetris.game.GameController;
 import tetris.game.gui.controllers.MainContainerController;
-import tetris.game.logic.bricks.shapes.TBrick;
 
 import java.io.FileInputStream;
 import java.util.Objects;
@@ -38,6 +36,9 @@ public class App extends Application {
             // Add an icon
             Image icon = new Image(new FileInputStream(ICON_PATH));
             primaryStage.getIcons().add(icon);
+
+            // Disable window resizing
+            primaryStage.setResizable(false);
 
             // Set the icon and the window title
             primaryStage.setScene(scene);

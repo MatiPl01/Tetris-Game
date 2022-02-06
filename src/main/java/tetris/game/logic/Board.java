@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 import tetris.game.enums.GameMode;
 import tetris.game.enums.EventType;
 import tetris.game.enums.Rotation;
-import tetris.game.helpers.Copy;
+import tetris.game.others.Copy;
 import tetris.game.logic.bricks.Brick;
 import tetris.game.logic.bricks.RandomBrickPicker;
 
@@ -27,7 +27,7 @@ public class Board {
         this.width = width;
         this.height = height;
         boardMatrix = new int[height][width];
-        brickPicker = new RandomBrickPicker(gameMode == GameMode.HARD);
+        brickPicker = new RandomBrickPicker(gameMode == GameMode.NORMAL);
         scores = new Scores();
     }
 

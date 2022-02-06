@@ -9,15 +9,18 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tetris.game.gui.controllers.NextBricksContainerController">
    <children>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label text="Następne kształty">
+            <Label text="Next shapes">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </Label>
-            <Separator prefWidth="200.0" />
-            <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="150.0">
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" />
+               </VBox.margin></Separator>
+            <AnchorPane maxHeight="200.0" maxWidth="200.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
@@ -25,8 +28,11 @@
                   <GridPane fx:id="nextGridPane1" styleClass="next-brick" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
-            <Separator prefWidth="200.0" />
-            <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" />
+               </VBox.margin></Separator>
+            <AnchorPane maxHeight="200.0" maxWidth="200.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
                <children>
                   <GridPane fx:id="nextGridPane2" styleClass="next-brick" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
@@ -34,8 +40,11 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </AnchorPane>
-            <Separator prefWidth="200.0" />
-            <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" />
+               </VBox.margin></Separator>
+            <AnchorPane maxHeight="200.0" maxWidth="200.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
                <children>
                   <GridPane fx:id="nextGridPane3" styleClass="next-brick" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>

@@ -6,9 +6,6 @@ import tetris.game.GameController;
 import tetris.game.enums.GameMode;
 
 public class MainContainerController {
-    private Scene scene;
-    private GameController gameController;
-
     @FXML
     private BoardContainerController boardContainerController;
 
@@ -26,7 +23,8 @@ public class MainContainerController {
 
     @FXML
     private void initialize() {
-        gameController = new GameController(10, 20, GameMode.HARD, this); // TODO - make these params adjustable before game initialization
+        GameController gameController = new GameController(10, 20, GameMode.HARD, this); // TODO - make these params adjustable before game initialization
+        settingsContainerController.setGameController(gameController);
     }
 
     public BoardContainerController getBoardContainerController() {
@@ -37,8 +35,19 @@ public class MainContainerController {
         return nextBricksContainerController;
     }
 
+    public TimeContainerController getTimeContainerController() {
+        return timeContainerController;
+    }
+
+    public ScoreContainerController getScoreContainerController() {
+        return scoreContainerController;
+    }
+
+    public SettingsContainerController getSettingsContainerController() {
+        return settingsContainerController;
+    }
+
     public void init(Scene scene, int boardWidth, int boardHeight) {
-        this.scene = scene;
         boardContainerController.init(scene, boardWidth, boardHeight);
     }
 }

@@ -17,7 +17,7 @@ import tetris.game.logic.Board;
 
 public class BoardContainerController {
     private static final int REFRESH_INTERVAL = 400;
-    private static final int CELL_SIZE = 30;
+    private static final int WINDOW_HEIGHT = 680;
 
     private Grid grid;
     private Scene scene;
@@ -29,23 +29,30 @@ public class BoardContainerController {
 
     public void init(Scene scene, int boardWidth, int boardHeight) {
         this.scene = scene;
-        grid = new Grid(gridPane, boardWidth, boardHeight, CELL_SIZE);
+        grid = new Grid(gridPane, boardWidth, boardHeight, -1, WINDOW_HEIGHT);
         setupKeyboardEvents();
         gameController.newGame();
     }
 
+    public void pauseAnimation() {
+        if (timeline != null) timeline.stop();
+    }
+
     public void startAnimation() {
-        timeline = new Timeline(new KeyFrame(
-                Duration.millis(REFRESH_INTERVAL),
-                actionEvent -> {
-                    if (gameController.getGameState() == GameState.RUNNING) {
-                        gameController.handleMoveEvent(new MoveEvent(EventSource.COMPUTER, EventType.DOWN));
-                    } else {
-                        timeline.stop();
-                    }
-                })
-        );
-        timeline.setCycleCount(Timeline.INDEFINITE);
+        if (timeline == null) {
+            timeline = new Timeline(new KeyFrame(
+                    Duration.millis(REFRESH_INTERVAL),
+                    actionEvent -> {
+                        if (gameController.getGameState() == GameState.RUNNING) {
+                            gridPane.requestFocus();
+                            gameController.handleMoveEvent(new MoveEvent(EventSource.COMPUTER, EventType.DOWN));
+                        } else {
+                            timeline.stop();
+                        }
+                    })
+            );
+            timeline.setCycleCount(Timeline.INDEFINITE);
+        }
         timeline.play();
     }
 
@@ -63,7 +70,7 @@ public class BoardContainerController {
                 grid.get(x, y).getChildren().clear();
                 if (matrix[y][x] == 0) continue;
 
-                Rectangle rectangle = new Rectangle(CELL_SIZE, CELL_SIZE);
+                Rectangle rectangle = new Rectangle(grid.getCellWidth(), grid.getCellHeight());
 
                 // Display the current brick
                 if (matrix[y][x] > 0) {

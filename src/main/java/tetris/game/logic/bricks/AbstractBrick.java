@@ -2,7 +2,7 @@ package tetris.game.logic.bricks;
 
 import javafx.scene.paint.Color;
 import tetris.game.enums.Rotation;
-import tetris.game.helpers.Copy;
+import tetris.game.others.Copy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,7 +121,6 @@ public abstract class AbstractBrick implements Brick {
 
         for (int i = 0; i < count - 1; i++) {
             shape = getRotatedShape(shape);
-            printAllShapes();
             addBrickShape(shape);
         }
     }
