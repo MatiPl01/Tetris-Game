@@ -43,7 +43,8 @@ public class GameController {
     }
 
     public void newGame() {
-        this.gameState = GameState.RUNNING;
+        gameState = GameState.RUNNING;
+        board.saveScores();
         board.newGame();
         boardContainerController.requestAnimationFrame(board);
         settingsContainerController.newGame();
@@ -54,7 +55,8 @@ public class GameController {
     }
 
     public void gameOver() {
-        this.gameState = GameState.FINISHED;
+        gameState = GameState.FINISHED;
+        board.saveScores();
         timeContainerController.pauseTimer();
         boardContainerController.pauseAnimation();
         settingsContainerController.gameOver();
@@ -95,15 +97,7 @@ public class GameController {
     private void handleDownEvent(EventSource eventSource) {
         boolean canMove = board.moveBrick(EventType.DOWN);
 
-        if (!canMove) {
-            board.placeBrick();
-            // Check if there are rows that can be cleared
-            board.clearFullRows();
-            // Spawn a new brick
-            spawnNewBrick();
-            // Refresh next bricks container
-            refreshNextBricks();
-        }
+        if (!canMove) placeBrickHelper(false);
         // Add 1 score if a brick was moved down by a player
         if (eventSource == EventSource.PLAYER) {
             board.getScoresObj().add(1);
@@ -111,7 +105,13 @@ public class GameController {
     }
 
     private void handlePlaceEvent() {
-        board.placeBrick(true);
+        placeBrickHelper(true);
+    }
+
+    private void placeBrickHelper(boolean updateScore) {
+        board.placeBrick(updateScore);
+        // Check if there are rows that can be cleared
+        board.clearFullRows();
         // Spawn a new brick
         spawnNewBrick();
         // Refresh next bricks container

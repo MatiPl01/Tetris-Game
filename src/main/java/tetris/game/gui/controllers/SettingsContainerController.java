@@ -11,8 +11,8 @@ public class SettingsContainerController {
     private static final String MUSIC_LOOPED_PATH = "src/main/resources/audio/tetris-audio-main.wav";
     private static final String PAUSE_GAME_TEXT = "Pause";
     private static final String RESUME_GAME_TEXT = "Resume";
-    private static final String PAUSE_MUSIC_TEXT = "Start";
-    private static final String RESUME_MUSIC_TEXT = "Stop";
+    private static final String PAUSE_MUSIC_TEXT = "Stop";
+    private static final String RESUME_MUSIC_TEXT = "Play";
 
     private final MusicPlayer musicPlayer = new MusicPlayer();
     private MusicState musicState = MusicState.PLAYING;
@@ -72,16 +72,18 @@ public class SettingsContainerController {
 
     public void newGame() {
         pauseGameButton.setDisable(false);
+        pauseMusicButton.setDisable(false);
     }
 
     public void gameOver() {
         musicPlayer.clear();
         pauseGameButton.setDisable(true);
+        pauseMusicButton.setDisable(true);
     }
 
     private void setupMusicPlayer() {
         musicPlayer.addTrack(MUSIC_BEGINNING_PATH);
-        musicPlayer.addTrack(MUSIC_LOOPED_PATH, true);
+        musicPlayer.addTrack(MUSIC_LOOPED_PATH,true);
         musicPlayer.play();
     }
 }

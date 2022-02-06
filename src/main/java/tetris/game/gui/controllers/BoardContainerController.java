@@ -17,7 +17,7 @@ import tetris.game.logic.Board;
 
 public class BoardContainerController {
     private static final int REFRESH_INTERVAL = 400;
-    private static final int WINDOW_HEIGHT = 680;
+    private static final int WINDOW_HEIGHT = 690;
 
     private Grid grid;
     private Scene scene;

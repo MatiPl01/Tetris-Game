@@ -21,12 +21,6 @@ public class MainContainerController {
     @FXML
     private SettingsContainerController settingsContainerController;
 
-    @FXML
-    private void initialize() {
-        GameController gameController = new GameController(10, 20, GameMode.HARD, this); // TODO - make these params adjustable before game initialization
-        settingsContainerController.setGameController(gameController);
-    }
-
     public BoardContainerController getBoardContainerController() {
         return boardContainerController;
     }
@@ -47,7 +41,9 @@ public class MainContainerController {
         return settingsContainerController;
     }
 
-    public void init(Scene scene, int boardWidth, int boardHeight) {
+    public void init(Scene scene, int boardWidth, int boardHeight, GameMode gameMode) {
+        GameController gameController = new GameController(boardWidth, boardHeight, gameMode, this);
+        settingsContainerController.setGameController(gameController);
         boardContainerController.init(scene, boardWidth, boardHeight);
     }
 }

@@ -15,8 +15,8 @@ import java.util.Set;
 public class MusicPlayer {
     private final static int REFRESH_INTERVAL = 1;
 
-    Deque<AudioInputStream> playingDeque = new ArrayDeque<>();
-    Set<AudioInputStream> repeatedTracks = new HashSet<>();
+    Deque<Clip> playingDeque = new ArrayDeque<>();
+    Set<Clip> repeatedTracks = new HashSet<>();
     private final Timeline timeline;
     private Clip currentTrack;
 
@@ -36,9 +36,11 @@ public class MusicPlayer {
         File file = new File(path);
         try {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
-            playingDeque.add(audioStream);
-            if (repeat) repeatedTracks.add(audioStream);
-        } catch (UnsupportedAudioFileException | IOException e) {
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            playingDeque.add(clip);
+            if (repeat) repeatedTracks.add(clip);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
     }
@@ -54,34 +56,31 @@ public class MusicPlayer {
     public void play() {
         if (playingDeque.size() > 0) {
             if (currentTrack == null) playNextTrack();
-            currentTrack.start();
+            else currentTrack.start();
             timeline.play();
         }
     }
 
     public void pause() {
-        currentTrack.stop();
-        timeline.pause();
+        if (currentTrack != null) {
+            currentTrack.stop();
+            timeline.pause();
+        }
     }
 
     private void checkAudioSwitch() {
         if (currentTrack.getFramePosition() >= currentTrack.getFrameLength()) {
             playNextTrack();
-            currentTrack.start();
         }
     }
 
     private void playNextTrack() {
         if (playingDeque.size() > 0) {
-            AudioInputStream audioStream = playingDeque.poll();
-            if (repeatedTracks.contains(audioStream)) playingDeque.add(audioStream);
-            try {
-                Clip clip = AudioSystem.getClip();
-                clip.open(audioStream);
-                currentTrack = clip;
-            } catch (LineUnavailableException | IOException e) {
-                e.printStackTrace();
-            }
+            Clip clip = playingDeque.poll();
+            clip.setFramePosition(0);
+            if (repeatedTracks.contains(clip)) playingDeque.add(clip);
+            currentTrack = clip;
+            currentTrack.start();
         }
     }
 }
