@@ -1,30 +1,26 @@
 {
-  "dimensions": {
-    "width": {
-      "default": 10,
-      "min": 5,
-      "max": 40
-    },
-    "height": {
-      "default": 20,
-      "min": 10,
-      "max": 50
-    },
-    "mode": {
-      "default": "normal",
-      "allModes": ["normal", "hard"]
-    },
-    "refreshInterval": {
-      "minInterval": {
-        "min": 10,
-        "max": 1000,
-        "default": 50
-      },
-      "maxInterval": {
-        "min": 10,
-        "max": 5000,
-        "default": 500
-      }
-    }
+  "width": {
+    "def": 10,
+    "min": 5,
+    "max": 40
+  },
+  "height": {
+    "def": 20,
+    "min": 10,
+    "max": 50
+  },
+  "mode": {
+    "def": "normal",
+    "all": ["normal", "hard"]
+  },
+  "minRefreshInterval": {
+    "min": 10,
+    "max": 1000,
+    "def": 50
+  },
+  "maxRefreshInterval": {
+    "min": 10,
+    "max": 5000,
+    "def": 500
   }
 }

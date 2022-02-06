@@ -43,7 +43,7 @@ public class MainContainerController {
         return settingsContainerController;
     }
 
-    public void init(Scene scene, int boardWidth, int boardHeight, GameMode gameMode) {
+    public void init(Scene scene, int boardWidth, int boardHeight, GameMode gameMode, boolean spawnBombs) {
         GameController gameController = new GameController(boardWidth, boardHeight, gameMode, this);
         gameControllerThread = new Thread(gameController);
         settingsContainerController.setGameController(gameController);

@@ -120,7 +120,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefWidth="250.0">
                            <children>
-                              <ComboBox fx:id="difficultyInput" onAction="#onDifficultyChange" prefWidth="150.0" />
+                              <ComboBox fx:id="difficultyInput" prefWidth="150.0" />
                            </children>
                         </HBox>
                      </children>
@@ -133,7 +133,7 @@
                   </VBox>
                   <HBox alignment="CENTER">
                      <children>
-                        <CheckBox fx:id="spawnBombsCheckbox" mnemonicParsing="false" onAction="#onSpawnBombsCheck" text="Spawn bombs">
+                        <CheckBox fx:id="spawnBombsCheckbox" mnemonicParsing="false" text="Spawn bombs">
                            <HBox.margin>
                               <Insets top="10.0" />
                            </HBox.margin>

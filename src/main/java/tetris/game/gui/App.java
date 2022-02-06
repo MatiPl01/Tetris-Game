@@ -39,7 +39,7 @@ public class App extends Application {
             primaryStage.getIcons().add(icon);
 
             // Disable window resizing
-            primaryStage.setResizable(false);
+//            primaryStage.setResizable(false);
 
             // Set the icon and the window title
             primaryStage.setScene(scene);
