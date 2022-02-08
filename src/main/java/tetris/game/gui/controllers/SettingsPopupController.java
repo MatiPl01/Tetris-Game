@@ -122,14 +122,29 @@ public class SettingsPopupController {
         setupIntValueValidator(maxRefreshIntervalInput, config.maxRefreshInterval);
 
         minRefreshIntervalInput.textProperty().addListener((observable, oldValue, newValue) -> {
-           if (parseInt(newValue) > parseInt(maxRefreshIntervalInput.getText())) {
-               maxRefreshIntervalInput.setText(newValue);
-           }
+            String maxRefreshIntervalValue = maxRefreshIntervalInput.getText();
+
+            if (!Objects.equals(newValue, "")) {
+                if (Objects.equals(maxRefreshIntervalValue, "") ||
+                        parseInt(newValue) > parseInt(maxRefreshIntervalValue)) {
+                    maxRefreshIntervalInput.setText(newValue);
+                }
+            }
         });
 
         maxRefreshIntervalInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (parseInt(newValue) < parseInt(minRefreshIntervalInput.getText())) {
-                minRefreshIntervalInput.setText(newValue);
+            String minRefreshIntervalValue = minRefreshIntervalInput.getText();
+
+            if (!Objects.equals(newValue, "")) {
+                if (Objects.equals(minRefreshIntervalValue, "") ||
+                        parseInt(newValue) < parseInt(minRefreshIntervalValue)) {
+                    minRefreshIntervalInput.setText(newValue);
+                } else {
+                    int minRefreshInterval = parseInt(minRefreshIntervalValue);
+                    int validatedValue = validateInput(minRefreshInterval, config.minRefreshInterval);
+                    int value = Math.max(minRefreshInterval, validatedValue);
+                    minRefreshIntervalInput.setText(String.valueOf(value));
+                }
             }
         });
     }
@@ -201,7 +216,9 @@ public class SettingsPopupController {
             parseInt(widthInput.getText()),
             parseInt(heightInput.getText()),
             getDifficultyInput(),
-            spawnBombsCheckbox.isSelected()
+            spawnBombsCheckbox.isSelected(),
+            parseInt(minRefreshIntervalInput.getText()),
+            parseInt(maxRefreshIntervalInput.getText())
         );
     }
 }

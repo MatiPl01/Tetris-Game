@@ -8,12 +8,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
-import java.util.Objects;
 
 public class App extends Application {
     private static final String WINDOW_TITLE = "Tetris";
     private static final String ICON_PATH = "src/main/resources/images/icon.png";
-    private static final String STYLESHEET_PATH = "/css/style.css";
 
     @Override
     public void start(Stage primaryStage) {
@@ -24,16 +22,12 @@ public class App extends Application {
             AnchorPane settingsPopup = loader.load();
             Scene scene = new Scene(settingsPopup);
 
-            // Load stylesheet file
-            String css = Objects.requireNonNull(getClass().getResource(STYLESHEET_PATH)).toExternalForm();
-            scene.getStylesheets().add(css);
-
             // Add an icon
             Image icon = new Image(new FileInputStream(ICON_PATH));
             primaryStage.getIcons().add(icon);
 
             // Disable window resizing
-//            primaryStage.setResizable(false);
+            primaryStage.setResizable(false);
 
             // Set the icon and the window title
             primaryStage.setScene(scene);

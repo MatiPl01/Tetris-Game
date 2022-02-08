@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import tetris.game.GameController;
 import tetris.game.enums.EventSource;
 import tetris.game.enums.EventType;
@@ -16,10 +17,9 @@ import tetris.game.logic.bombs.Bomb;
 
 import java.awt.*;
 import java.util.Map;
-import java.util.Set;
 
 public class BoardContainerController {
-    private static final int WINDOW_HEIGHT = 690;
+    private static final int WINDOW_HEIGHT = 670;
 
     private Grid grid;
     private Scene scene;
@@ -35,6 +35,7 @@ public class BoardContainerController {
     public void init(Scene scene, int boardWidth, int boardHeight) {
         this.scene = scene;
         grid = new Grid(gridPane, boardWidth, boardHeight, -1, WINDOW_HEIGHT);
+        resizeStage();
         setupKeyboardEvents();
         gameController.newGame();
     }
@@ -103,5 +104,10 @@ public class BoardContainerController {
                 }
             }
         });
+    }
+
+    private void resizeStage() {
+        Stage stage = (Stage) scene.getWindow();
+        stage.setWidth(stage.getWidth() + grid.getCellWidth() * grid.getColumnsNum());
     }
 }

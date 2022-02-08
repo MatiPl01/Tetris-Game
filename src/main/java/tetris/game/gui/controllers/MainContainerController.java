@@ -2,11 +2,15 @@ package tetris.game.gui.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import tetris.game.GameController;
 import tetris.game.enums.GameMode;
 
+import java.awt.*;
+
 public class MainContainerController {
+    private Scene scene;
     private Thread gameControllerThread;
 
     @FXML
@@ -23,7 +27,6 @@ public class MainContainerController {
 
     @FXML
     private SettingsContainerController settingsContainerController;
-    private Scene scene;
 
     public BoardContainerController getBoardContainerController() {
         return boardContainerController;
@@ -45,7 +48,13 @@ public class MainContainerController {
         return settingsContainerController;
     }
 
-    public void init(Scene scene, int boardWidth, int boardHeight, GameMode gameMode, boolean spawnBombs) {
+    public void init(Scene scene,
+                     int boardWidth,
+                     int boardHeight,
+                     GameMode gameMode,
+                     boolean spawnBombs,
+                     int minRefreshInterval,
+                     int maxRefreshInterval) {
         this.scene = scene;
 
         GameController gameController = new GameController(
@@ -53,7 +62,9 @@ public class MainContainerController {
             boardHeight,
             gameMode,
             this,
-            spawnBombs
+            spawnBombs,
+            minRefreshInterval,
+            maxRefreshInterval
         );
 
         gameControllerThread = new Thread(gameController);

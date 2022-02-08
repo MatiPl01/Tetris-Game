@@ -18,10 +18,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class GameController implements Runnable {
-    private static final int MAX_REFRESH_INTERVAL = 500;
-    private static final int MIN_REFRESH_INTERVAL = 50;
     private static final int PAUSE_SLEEP_TIME = 100;
     private static final int MAX_SPEED_SCORE = 5000;
+
+    private final int minRefreshInterval;
+    private final int maxRefreshInterval;
 
     private final Board board;
     private final BoardContainerController boardContainerController;
@@ -34,13 +35,15 @@ public class GameController implements Runnable {
     private BombSpawner bombSpawner;
 
     private GameState gameState = GameState.FINISHED;
-    private int refreshInterval = MAX_REFRESH_INTERVAL;
+    private int refreshInterval;
 
     public GameController(int boardWidth,
                           int boardHeight,
                           GameMode gameMode,
                           MainContainerController mainContainerController,
-                          boolean spawnBombs) {
+                          boolean spawnBombs,
+                          int minRefreshInterval,
+                          int maxRefreshInterval) {
         // Assign values to attributes
         this.timeContainerController = mainContainerController.getTimeContainerController();
         this.scoreContainerController = mainContainerController.getScoreContainerController();
@@ -48,6 +51,9 @@ public class GameController implements Runnable {
         this.settingsContainerController = mainContainerController.getSettingsContainerController();
         this.nextBricksContainerController = mainContainerController.getNextBricksContainerController();
         this.mainContainerController = mainContainerController;
+        this.minRefreshInterval = minRefreshInterval;
+        this.maxRefreshInterval = maxRefreshInterval;
+        refreshInterval = maxRefreshInterval;
         board = new Board(boardWidth, boardHeight, gameMode, boardContainerController);
 
         if (spawnBombs) {
@@ -80,7 +86,7 @@ public class GameController implements Runnable {
         board.saveScores();
         board.newGame();
         timeContainerController.resetTimer();
-        refreshInterval = MAX_REFRESH_INTERVAL;
+        refreshInterval = maxRefreshInterval;
         updateSpeedLabel();
         refreshNextBricks();
     }
@@ -192,11 +198,11 @@ public class GameController implements Runnable {
     private void updateRefreshInterval() {
         int score = board.getScoresObj().getScore();
         double ratio = Math.min(1, 1. * score / MAX_SPEED_SCORE);
-        refreshInterval = (int)(MAX_REFRESH_INTERVAL - ratio * (MAX_REFRESH_INTERVAL - MIN_REFRESH_INTERVAL));
+        refreshInterval = (int)(maxRefreshInterval - ratio * (maxRefreshInterval - minRefreshInterval));
         updateSpeedLabel();
     }
 
     private void updateSpeedLabel() {
-        Platform.runLater(() -> scoreContainerController.setSpeedMultiplier(1. * MAX_REFRESH_INTERVAL / refreshInterval));
+        Platform.runLater(() -> scoreContainerController.setSpeedMultiplier(1. * maxRefreshInterval / refreshInterval));
     }
 }

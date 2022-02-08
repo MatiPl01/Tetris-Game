@@ -46,6 +46,14 @@ public class Grid {
         return cellHeight;
     }
 
+    public double getColumnsNum() {
+        return colsNum;
+    }
+
+    public double getRowsNum() {
+        return rowsNum;
+    }
+
     public void clear() {
         for (int y = 0; y < rowsNum; y++) {
             for (int x = 0; x < colsNum; x++) {
